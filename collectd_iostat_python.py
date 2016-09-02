@@ -178,8 +178,8 @@ class IOMon(object):
             'MB_wrtn': {'t': 'bytes', 'ti': 'write', 'm': 1048576},
             'rrqm/s': {'t': 'requests_merged_per_second', 'ti': 'read'},
             'wrqm/s': {'t': 'requests_merged_per_second', 'ti': 'write'},
-            'r/s': {'t': 'per_second', 'ti': 'read'},
-            'w/s': {'t': 'per_second', 'ti': 'write'},
+            'r/s': {'t': 'requests_per_second', 'ti': 'read'},
+            'w/s': {'t': 'requests_per_second', 'ti': 'write'},
             'rsec/s': {'t': 'sectors_per_second', 'ti': 'read'},
             'rkB/s': {'t': 'bytes_per_second', 'ti': 'read', 'm': 1024},
             'rMB/s': {'t': 'bytes_per_second', 'ti': 'read', 'm': 1048576},
@@ -192,7 +192,7 @@ class IOMon(object):
             'r_await': {'t': 'avg_wait_time', 'ti': 'read'},
             'w_await': {'t': 'avg_wait_time', 'ti': 'write'},
             'svctm': {'t': 'avg_service_time'},
-            '%util': {'t': 'gauge', 'ti': 'util'}
+            '%util': {'t': 'percent', 'ti': 'util'}
         }
 
     def log_verbose(self, msg):
