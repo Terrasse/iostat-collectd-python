@@ -153,7 +153,7 @@ class IOStat(object):
 
 class IOMon(object):
     def __init__(self):
-        self.plugin_name = 'collectd-iostat-python'
+        self.plugin_name = 'iostat'
         self.iostat_path = '/usr/bin/iostat'
         self.interval = 60.0
         self.iostat_interval = 2
@@ -192,7 +192,7 @@ class IOMon(object):
             'r_await': {'t': 'avg_wait_time', 'ti': 'read'},
             'w_await': {'t': 'avg_wait_time', 'ti': 'write'},
             'svctm': {'t': 'avg_service_time'},
-            '%util': {'t': 'percent', 'ti': 'util'}
+            '%util': {'t': 'gauge', 'ti': 'util'}
         }
 
     def log_verbose(self, msg):
