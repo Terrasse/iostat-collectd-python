@@ -15,6 +15,7 @@
 # https://bitbucket.org/jakamkon/python-iostat
 #   - by Kuba Kończyk <jakamkon at users.sourceforge.net>
 #
+# This fork is maintained by SignalFx <support@signalfx.com>
 
 import signal
 import string
@@ -23,7 +24,13 @@ import sys
 
 
 __version__ = '0.0.3'
+
+# Original Author
 __author__ = 'denis.zhdanov@gmail.com'
+
+# Fork maintained by SignalFx
+__maintainer__ = "SignalFx"
+__email__ = "support@signalfx.com"
 
 
 class IOStatError(Exception):
