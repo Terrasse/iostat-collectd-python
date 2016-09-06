@@ -152,11 +152,11 @@ License
 Support
 -------
 
-Please do not send me PMs in Twitter with issues. Just open an [issue](https://github.com/deniszh/collectd-iostat-python/issues) on [projects' Github](https://github.com/deniszh/collectd-iostat-python) instead and I'll respond ASAP!
+Fork maintained by SignalFx
+[support@signalfx.com](mailto:support@signalfx.com)
 
 
-Contact
--------
-
+Original Author
+---------------
 [Denis Zhdanov](mailto:denis.zhdanov@gmail.com)
 ([@deniszh](http://twitter.com/deniszh))

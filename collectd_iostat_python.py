@@ -15,6 +15,7 @@
 # https://bitbucket.org/jakamkon/python-iostat
 #   - by Kuba Kończyk <jakamkon at users.sourceforge.net>
 #
+# This fork is maintained by SignalFx <support@signalfx.com>
 
 import signal
 import string
@@ -23,7 +24,13 @@ import sys
 
 
 __version__ = '0.0.3'
+
+# Original Author
 __author__ = 'denis.zhdanov@gmail.com'
+
+# Fork maintained by SignalFx
+__maintainer__ = "SignalFx"
+__email__ = "support@signalfx.com"
 
 
 class IOStatError(Exception):
@@ -153,7 +160,7 @@ class IOStat(object):
 
 class IOMon(object):
     def __init__(self):
-        self.plugin_name = 'collectd-iostat-python'
+        self.plugin_name = 'iostat'
         self.iostat_path = '/usr/bin/iostat'
         self.interval = 60.0
         self.iostat_interval = 2
@@ -162,6 +169,7 @@ class IOMon(object):
         self.iostat_nice_names = False
         self.iostat_disks_regex = ''
         self.verbose_logging = False
+        self.include = set([])
         self.names = {
             'tps': {'t': 'transfers_per_second'},
             'Blk_read/s': {'t': 'blocks_per_second', 'ti': 'read'},
@@ -169,7 +177,9 @@ class IOMon(object):
             'MB_read/s': {'t': 'bytes_per_second', 'ti': 'read', 'm': 1048576},
             'Blk_wrtn/s': {'t': 'blocks_per_second', 'ti': 'write'},
             'kB_wrtn/s': {'t': 'bytes_per_second', 'ti': 'write', 'm': 1024},
-            'MB_wrtn/s': {'t': 'bytes_per_second', 'ti': 'write', 'm': 1048576},
+            'MB_wrtn/s': {'t': 'bytes_per_second',
+                          'ti': 'write',
+                          'm': 1048576},
             'Blk_read': {'t': 'blocks', 'ti': 'read'},
             'kB_read': {'t': 'bytes', 'ti': 'read', 'm': 1024},
             'MB_read': {'t': 'bytes', 'ti': 'read', 'm': 1048576},
@@ -178,8 +188,8 @@ class IOMon(object):
             'MB_wrtn': {'t': 'bytes', 'ti': 'write', 'm': 1048576},
             'rrqm/s': {'t': 'requests_merged_per_second', 'ti': 'read'},
             'wrqm/s': {'t': 'requests_merged_per_second', 'ti': 'write'},
-            'r/s': {'t': 'per_second', 'ti': 'read'},
-            'w/s': {'t': 'per_second', 'ti': 'write'},
+            'r/s': {'t': 'requests_per_second', 'ti': 'read'},
+            'w/s': {'t': 'requests_per_second', 'ti': 'write'},
             'rsec/s': {'t': 'sectors_per_second', 'ti': 'read'},
             'rkB/s': {'t': 'bytes_per_second', 'ti': 'read', 'm': 1024},
             'rMB/s': {'t': 'bytes_per_second', 'ti': 'read', 'm': 1048576},
@@ -225,6 +235,10 @@ class IOMon(object):
                 self.plugin_name = val
             elif node.key == 'Verbose':
                 self.verbose_logging = val in ['True', 'true']
+            elif node.key == 'Include':
+                tbl = string.maketrans('/-%', '___')
+                for i in node.values:
+                    self.include.add(i.translate(tbl))
             else:
                 collectd.warning(
                     '%s plugin: Unknown config key: %s.' % (
@@ -239,6 +253,10 @@ class IOMon(object):
                 self.iostat_count,
                 self.iostat_disks,
                 self.iostat_disks_regex))
+
+        if len(self.include) != 0:
+            self.log_verbose('Report only the following metrics: {0}'
+                             .format(self.include))
 
         collectd.register_read(self.read_callback, self.interval)
 
@@ -260,7 +278,7 @@ class IOMon(object):
         if len(type_instance):
             val.type_instance = type_instance
         val.values = [value, ]
-        val.meta={'0': True}
+        val.meta = {'0': True}
         val.dispatch()
 
     def read_callback(self):
@@ -298,8 +316,13 @@ class IOMon(object):
                     type_instance = name.translate(tbl)
                     value = ds[disk][name]
 
-                self.dispatch_value(
-                    disk, val_type, type_instance, value)
+                if len(self.include) == 0 \
+                   or (self.iostat_nice_names is True
+                       and ('.'.join([val_type, type_instance]) in self.include
+                            or val_type in self.include)) \
+                   or (self.iostat_nice_names is False and
+                       type_instance in self.include):
+                    self.dispatch_value(disk, val_type, type_instance, value)
 
 
 def restore_sigchld():
