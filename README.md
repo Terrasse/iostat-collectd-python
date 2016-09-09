@@ -1,10 +1,10 @@
-collectd-iostat-python
+iostat-collectd-python
 ======================
 
-`collectd-iostat-python` is an `iostat` plugin for collectd that allows you to
+`iostat-collectd-python` is an `iostat` plugin for collectd that allows you to
 collect Linux `iostat` metrics in formats that are supported by collectd.
 
-`collectd-iostat-python` functions by calling `iostat` at configured
+`iostat-collectd-python` functions by calling `iostat` at configured
 intervals and reports that data via the collectd `python` plugin.
 
 
