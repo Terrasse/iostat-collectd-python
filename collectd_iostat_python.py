@@ -162,7 +162,7 @@ class IOMon(object):
     def __init__(self):
         self.plugin_name = 'iostat'
         self.iostat_path = '/usr/bin/iostat'
-        self.interval = 60.0
+        self.interval = 10.0
         self.iostat_interval = 2
         self.iostat_count = 2
         self.iostat_disks = []
